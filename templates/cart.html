@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Shopping Cart</h2>
+{% if items %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Subtotal</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td>${{ "%.2f"|format(item.product.price) }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('update_cart', item_id=item.id) }}">
+          <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="form-control" style="width:80px; display:inline-block;">
+          <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+        </form>
+      </td>
+      <td>${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('update_cart', item_id=item.id) }}">
+          <input type="hidden" name="quantity" value="0">
+          <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h4>Total: ${{ "%.2f"|format(total) }}</h4>
+<a href="{{ url_for('checkout') }}" class="btn btn-success btn-lg">Checkout</a>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}
